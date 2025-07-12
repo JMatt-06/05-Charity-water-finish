@@ -8,47 +8,93 @@
 </head>
 <body>
     <div id="game-container">
-        <h1>"Collect 50 water droplets while avoiding 5 corrupted droplets!"</h1>
-        <!-- Progress bar for jerry can fill -->
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
-        </div>
-        <!-- Main game area and sidebar -->
+        <h1>Snake: for Charity Water</h1>
+        <!-- Progress bar for jerry can fill, now on the left side of the game area -->
         <div style="display: flex; align-items: flex-start; justify-content: center;">
-            <div id="game-area">
-                <!-- Jerry can and droplets will be added here by JavaScript -->
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <div id="score-sidebar">
-                    <div id="score-box">
-                        <span id="score-label">💧 Water: </span><span id="score">0</span>
-                    </div>
-                    <div id="corrupted-box">
-                        <span id="corrupted-label">🦠 Corrupted: </span><span id="corrupted-marker">0</span>
-                    </div>
-                    <div id="sidebar-buttons">
-                        <button id="start-btn">Start</button>
-                        <button id="stop-btn" style="display:none;">Stop</button>
-                        <button id="reset-btn" style="display:inline-block;">Reset</button>
-                    </div>
-                    <div id="logo-row">
-                        <img id="cw-logo" src="img/cw_logo_horizontal.png" alt="charity: water logo">
-                    </div>
+            <!-- Progress bar column -->
+            <div id="progress-bar-outer" style="display: flex; flex-direction: column; align-items: center; margin-right: 1.5em;">
+                <div id="progress-bar-label" style="margin-bottom: 0.5em; font-size: 1.1rem;">Next Jerry Can</div>
+                <div id="progress-bar-container" style="width: 24px; height: 300px; background: #e0e0e0; border-radius: 12px; border: 2px solid #FFC907; display: flex; flex-direction: column-reverse; overflow: hidden;">
+                    <div id="progress-bar" style="width: 100%; background: #FFC907; height: 0%; transition: height 0.3s;"></div>
                 </div>
-                <!-- Message area for win/lose or milestone messages, now directly below the sidebar -->
-                <div id="message"></div>
+                <div id="progress-bar-text" style="margin-top: 0.5em; font-size: 1rem;">0 / 10</div>
+            </div>
+            <!-- Main game area and sidebar -->
+            <div style="display: flex; align-items: flex-start; justify-content: center;">
+                <div id="game-area">
+                    <!-- Jerry can and droplets will be added here by JavaScript -->
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div id="score-sidebar">
+                        <div id="score-box">
+                            <span id="score-label">💧 Water: </span><span id="score">0</span>
+                        </div>
+                        <div id="corrupted-box">
+                            <span id="corrupted-label">🦠 Corrupted: </span><span id="corrupted-marker">0</span>
+                        </div>
+                        <div id="sidebar-buttons">
+                            <button id="start-btn">Start</button>
+                            <button id="stop-btn" style="display:none;">Stop</button>
+                            <button id="reset-btn" style="display:inline-block;">Reset</button>
+                        </div>
+                        <div id="logo-row">
+                            <img id="cw-logo" src="img/cw_logo_horizontal.png" alt="charity: water logo">
+                        </div>
+                    </div>
+                    <!-- Message area for win/lose or milestone messages, now directly below the sidebar -->
+                    <div id="message"></div>
+                </div>
             </div>
         </div>
-        <!-- Difficulty selector (optional, can be hidden at first) -->
-        <div id="difficulty-select" style="display:none;">
-            <label for="difficulty">Select Difficulty:</label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
+        <!-- Center the difficulty selector and objectives below the grid -->
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 2em;">
+            <div id="difficulty-select" style="display: flex; flex-direction: column; align-items: center;">
+                <label for="difficulty" style="margin-bottom: 0.5em;">Select Difficulty:</label>
+                <select id="difficulty" style="margin-bottom: 1em;">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <!-- Milestone objectives for each difficulty -->
+                <div id="difficulty-objectives" style="margin-top: 0; font-size: 1.1rem; text-align: center;">
+                    <strong>Objectives:</strong>
+                    <ul style="margin: 0.5em 0 0 1.5em; padding: 0; text-align: left;">
+                        <li><b>Easy:</b> Collect 50 water droplets, avoid 7 corrupted droplets</li>
+                        <li><b>Medium:</b> Collect 50 water droplets, avoid 5 corrupted droplets</li>
+                        <li><b>Hard:</b> Collect 50 water droplets, avoid 3 corrupted droplets</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-logo">
+          <img src="img/cw_logo_horizontal.png" alt="charity: water logo">
+        </div>
+        <div class="footer-nav">
+          <a href="https://www.charitywater.org/about">About Us</a>
+          <a href="https://www.charitywater.org/donate">Donate</a>
+          <a href="https://www.charitywater.org/contact">Contact Us</a>
+          <a href="https://www.charitywater.org/privacy">Privacy Policy</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://twitter.com/charitywater" target="_blank" aria-label="X">
+            <img src="img/x.svg" alt="X">
+          </a>
+          <a href="https://www.facebook.com/charitywater" target="_blank" aria-label="Facebook">
+            <img src="img/facebook.svg" alt="Facebook">
+          </a>
+          <a href="https://www.instagram.com/charitywater" target="_blank" aria-label="Instagram">
+            <img src="img/instagram.svg" alt="Instagram">
+          </a>
+        </div>
+        <div class="footer-legal">
+          <p>© 2025 charity: water — a 501(c)(3) nonprofit organization</p>
+        </div>
+      </div>
+    </footer>
 </body>
 </html>

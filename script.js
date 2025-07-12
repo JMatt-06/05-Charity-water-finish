@@ -18,6 +18,8 @@ let gameOver = false;
 let corruptedWaters = [];
 let corruptedCollected = 0;
 
+// Difficulty settings
+// (Variables declared later, so we don't need to declare them here)
 // Update score and corrupted marker selectors for sidebar
 const scoreDisplay = document.getElementById('score');
 const corruptedMarker = document.getElementById('corrupted-marker');
@@ -96,13 +98,16 @@ function moveSnake() {
         corruptedWaters.splice(corruptedIdx, 1);
         corruptedCollected++;
         // Reduce score by 3, but not below 0
-        score = Math.max(0, score - 3);
+        score = Math.max(0, score - 1);
+        // Deplete the next jerry can by 1, but not below 0
+        waterSinceLastJerryCan = Math.max(0, waterSinceLastJerryCan - 1);
         updateScore();
         updateCorruptedMarker();
-        if (corruptedCollected >= 5) {
+        updateProgressBar(); // Always update the progress bar when collecting corrupted water
+        if (corruptedCollected >= corruptedLimit) {
             gameOver = true;
             clearInterval(gameInterval);
-            document.getElementById('message').textContent = 'Game Over! You collected 5 corrupted water droplets.';
+            document.getElementById('message').textContent = `Game Over! You collected ${corruptedLimit} corrupted water droplets.`;
             startBtn.style.display = 'inline-block';
             stopBtn.style.display = 'none';
             return;
@@ -111,7 +116,9 @@ function moveSnake() {
     // Check for water collection
     if (water && newHead.x === water.x && newHead.y === water.y) {
         score++;
+        waterSinceLastJerryCan++;
         updateScore();
+        updateProgressBar();
         // End the game if 50 water droplets are collected
         if (score >= 50) {
             gameOver = true;
@@ -134,12 +141,15 @@ function moveSnake() {
             stopBtn.style.display = 'none';
             return;
         }
-        // Spawn a corrupted droplet every 3 water droplets
-        if (score % 3 === 0) {
+        // Spawn a corrupted droplet every X water droplets
+        if (score % corruptedEvery === 0) {
             spawnCorruptedWater();
         }
         // Every 10 water droplets, add a new part to the snake (grow by 1 extra)
         if (score % 10 === 0) {
+            // Reset progress bar and waterSinceLastJerryCan
+            waterSinceLastJerryCan = 0;
+            updateProgressBar();
             // Do not remove the tail, so the snake grows by 1
             // (No pop here means the snake grows by 2 for this move)
         } else {
@@ -236,7 +246,7 @@ startBtn.addEventListener('click', () => {
         startGame();
     } else {
         // Resume game
-        gameInterval = setInterval(moveSnake, 150);
+        gameInterval = setInterval(moveSnake, moveInterval);
     }
 });
 
@@ -263,6 +273,53 @@ resetBtn.addEventListener('click', () => {
     // Wait for user to press Start again
 });
 
+// Difficulty settings
+let difficulty = 'normal'; // Default
+let moveInterval = 150; // Default speed
+let corruptedEvery = 3; // Default: spawn corrupted every 3 water
+let corruptedLimit = 5; // Default: lose at 5 corrupted
+
+// Get difficulty selector
+const difficultySelect = document.getElementById('difficulty');
+difficultySelect.addEventListener('change', () => {
+    setDifficulty(difficultySelect.value);
+});
+
+// Set difficulty settings
+function setDifficulty(level) {
+    difficulty = level;
+    if (level === 'easy') {
+        moveInterval = 250; // slower
+        corruptedEvery = 5; // less corrupted
+        corruptedLimit = 7; // more allowed
+    } else if (level === 'hard') {
+        moveInterval = 100; // faster
+        corruptedEvery = 2; // more corrupted
+        corruptedLimit = 3; // less allowed
+    } else {
+        moveInterval = 150;
+        corruptedEvery = 3;
+        corruptedLimit = 5;
+    }
+}
+
+// Set initial difficulty
+setDifficulty(difficultySelect.value);
+
+// Progress bar variables for jerry can spawn
+const progressBar = document.getElementById('progress-bar');
+const progressBarText = document.getElementById('progress-bar-text');
+const JERRYCAN_WATER_GOAL = 10; // Water needed for next jerry can
+let waterSinceLastJerryCan = 0;
+
+// Update the progress bar
+function updateProgressBar() {
+    // Calculate percent fill
+    const percent = Math.min(100, (waterSinceLastJerryCan / JERRYCAN_WATER_GOAL) * 100);
+    progressBar.style.height = `${percent}%`;
+    progressBarText.textContent = `${waterSinceLastJerryCan} / ${JERRYCAN_WATER_GOAL}`;
+}
+
 // Reset game state to initial values
 function resetGameState() {
     snake = [{ x: 5, y: 5 }];
@@ -270,8 +327,9 @@ function resetGameState() {
     nextDirection = { x: 1, y: 0 };
     water = spawnWater(); // Always spawn water after resetting snake
     score = 0;
-    gameOver = false;
+    waterSinceLastJerryCan = 0;
     updateScore();
+    updateProgressBar();
     createGrid();
 }
 
@@ -282,11 +340,13 @@ function startGame() {
     paused = false;
     corruptedWaters = [];
     corruptedCollected = 0;
+    waterSinceLastJerryCan = 0;
     updateCorruptedMarker();
+    updateProgressBar();
     // Always reset snake and score when starting
     resetGameState();
-    // Start the game loop
-    gameInterval = setInterval(moveSnake, 150);
+    // Start the game loop with the selected speed
+    gameInterval = setInterval(moveSnake, moveInterval);
     document.getElementById('message').textContent = '';
 }
 
@@ -371,3 +431,5 @@ function fillGameAreaWithWater() {
         }
     }
 }
+
+
